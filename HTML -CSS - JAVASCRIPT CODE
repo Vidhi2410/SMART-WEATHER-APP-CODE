@@ -3,81 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Weather Website</title>
+  <title>Smart Weather App</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #4facfe, #00f2fe);
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       min-height: 100vh;
       margin: 0;
-      color: #333;
+      padding-top: 50px;
+      color: #fff;
     }
+
     h1 {
-      margin-bottom: 20px;
-      font-size: 2.5rem;
-      color: white;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+      font-size: 2.8rem;
+      font-weight: 600;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      animation: fadeInDown 1s ease;
     }
+
     .search-box {
       display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
+      gap: 12px;
+      margin-bottom: 40px;
+      animation: fadeInUp 1s ease;
     }
+
     input {
-      padding: 12px 16px;
-      border-radius: 12px;
+      padding: 14px 18px;
+      border-radius: 14px;
       border: none;
-      width: 250px;
+      width: 270px;
       font-size: 1rem;
       outline: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
     button {
-      padding: 12px 20px;
-      border-radius: 12px;
-      background: #003cff;
+      padding: 14px 24px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
       color: white;
       border: none;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
     }
     button:hover {
-      background: #001fbf;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
+
     .card {
-      background: white;
-      padding: 25px 30px;
-      border-radius: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.15);
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
       text-align: center;
-      width: 300px;
-      transition: transform 0.3s ease;
+      width: 320px;
+      backdrop-filter: blur(12px);
+      animation: fadeIn 1s ease;
     }
-    .card:hover {
-      transform: translateY(-5px);
+
+    .icon img {
+      width: 90px;
+      margin: 20px 0;
+      animation: pulse 2s infinite;
     }
-    .icon {
-      font-size: 60px;
-      margin: 15px 0;
-    }
+
     .temp {
-      font-size: 2rem;
+      font-size: 2.4rem;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
     }
+
     .desc {
-      font-size: 1.1rem;
-      color: #555;
+      font-size: 1.2rem;
+      color: #f1f1f1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
 <body>
-  <h1>🌤 Smart Weather App (Demo)</h1>
+  <h1>🌤 Smart Weather App</h1>
   <div class="search-box">
     <input type="text" id="cityInput" placeholder="Enter city name (e.g. Delhi, Mumbai)" />
     <button onclick="getWeather()">Search</button>
@@ -85,37 +127,39 @@
 
   <div id="weatherCard" class="card" style="display:none">
     <h2 id="cityName"></h2>
-    <div id="icon" class="icon">☀</div>
+    <div id="icon" class="icon"></div>
     <p id="temp" class="temp"></p>
     <p id="description" class="desc"></p>
   </div>
 
   <script>
-    const dummyWeather = {
-      Delhi: { temp: 34, desc: 'Sunny', icon: '☀' },
-      Mumbai: { temp: 30, desc: 'Humid and Rainy', icon: '🌧' },
-      London: { temp: 18, desc: 'Cloudy', icon: '☁' },
-      Paris: { temp: 22, desc: 'Clear Sky', icon: '☀' },
-      Tokyo: { temp: 25, desc: 'Light Rain', icon: '🌦' },
-      NewYork: { temp: 28, desc: 'Partly Cloudy', icon: '⛅' },
-      Bangalore: { temp: 26, desc: 'Moderate Rain', icon: '🌧' },
-      Jaipur: { temp: 35, desc: 'Hot and Dry', icon: '🔥' }
-    };
+    const apiKey = "767ac4e45d9516f47cd2578e778019ab"; //API key
 
-    function getWeather() {
+    async function getWeather() {
       const city = document.getElementById('cityInput').value.trim();
-      const data = dummyWeather[city];
-
-      if (!data) {
-        alert('City not found in demo data!\nTry: Delhi, Mumbai, London, etc.');
+      if (!city) {
+        alert("Please enter a city name!");
         return;
       }
 
-      document.getElementById('weatherCard').style.display = 'block';
-      document.getElementById('cityName').innerText = city;
-      document.getElementById('temp').innerText = `${data.temp}°C`;
-      document.getElementById('description').innerText = data.desc;
-      document.getElementById('icon').innerText = data.icon;
+      try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("City not found!");
+        
+        const data = await response.json();
+
+        document.getElementById('weatherCard').style.display = 'block';
+        document.getElementById('cityName').innerText = data.name;
+        document.getElementById('temp').innerText = `${data.main.temp}°C`;
+        document.getElementById('description').innerText = data.weather[0].description;
+
+        const iconCode = data.weather[0].icon;
+        document.getElementById('icon').innerHTML = `<img src="https://openweathermap.org/img/wn/${iconCode}@2x.png" alt="weather icon"/>`;
+
+      } catch (error) {
+        alert("Error: " + error.message);
+      }
     }
   </script>
 </body>
